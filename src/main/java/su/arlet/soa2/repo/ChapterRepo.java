@@ -1,46 +1,54 @@
 package su.arlet.soa2.repo;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.*;
+import org.jooq.DSLContext;
+import org.jooq.conf.ParamType;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import su.arlet.soa2.core.Chapter;
 
+
+import java.util.HashMap;
+
+import static org.jooq.impl.DSL.*;
+
+
+@AllArgsConstructor
 @Service
 public class ChapterRepo {
-    @Autowired
-    private JdbcTemplate template;
+
+    private NamedParameterJdbcTemplate template;
+    private DSLContext dsl;
+
+
 
     public Chapter getByID(Long id) {
-        var chapters = template.query(
-                """
-                                 SELECT * FROM chapters
-                                 WHERE id = $1
-                        """,
+        return template.query(
+                dsl.select().from(table("chapters")).where(field("id").eq(id)).getSQL(),
                 (rs, rowNum) -> new Chapter(
                         rs.getLong("id"),
                         rs.getString("name"),
-                        rs.getLong("marines_count")),
-                id
-        );
+                        rs.getLong("marines_count"))
 
-        return chapters.getFirst();
+        ).getFirst();
     }
 
-    public Long create(Chapter chapter) {
-        return template.queryForObject(
-                """
-                                INSERT INTO chapters
-                                (
-                                    name, marines_count
-                                )
-                                VALUES
-                                (
-                                    $1, $2
-                                )
-                                RETURNING id
-                        """,
-                Long.class,
-                chapter.getName(), chapter.getMarinesCount()
-        );
+    public Long createChapter(Chapter chapter) {
+        return template.query(
+                dsl.insertInto(table("chapters")).columns(field("name"), field("marines_count"))
+                        .values(chapter.getName(), chapter.getMarinesCount()).returning(field("id")).getSQL(ParamType.INLINED),
+                (rs, rowNum) -> rs.getLong("id")
+        ).getFirst();
     }
+
+    public Chapter findByName(String name) {
+        return template.query(
+                dsl.select().from(table("chapters")).where(field("name").eq(name)).getSQL(),
+               (rs, rowNum) -> new Chapter(
+                       rs.getLong("id"),
+                      rs.getString("name"),
+                       rs.getLong("marines_count"))
+                ).getFirst();
+    }
+
 }

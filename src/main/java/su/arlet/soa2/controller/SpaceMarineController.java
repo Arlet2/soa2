@@ -1,12 +1,13 @@
 package su.arlet.soa2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import su.arlet.soa2.core.Chapter;
+import su.arlet.soa2.core.SpaceMarine;
 import su.arlet.soa2.service.ChapterService;
 import su.arlet.soa2.service.SpaceMarineService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/space-marines")
@@ -18,7 +19,8 @@ public class SpaceMarineController {
     private ChapterService chapterService;
 
     @GetMapping(
-            produces = "application/xml"
+               path = "/{id}",
+              produces = "application/json"
     )
     public SpaceMarinePresenter getSpaceMarine(@RequestParam(name="id") int id) {
         var spaceMarine = spaceMarineService.getSpaceMarine(id);
@@ -40,5 +42,18 @@ public class SpaceMarineController {
                 spaceMarine.getWeaponType().name(),
                 chapterPresenter
         );
+    }
+
+    @PostMapping
+    public Long createSpaceMarine(@RequestBody SpaceMarineCreator spaceMarine) {
+        return spaceMarineService.createSpaceMarine(spaceMarine);
+    }
+
+    @GetMapping(
+            produces = "application/xml"
+            )
+    public Page<SpaceMarine> getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "10") int size, @RequestParam(name="sort", defaultValue = "id") String[] sort, @RequestParam(name="direction", defaultValue = "") String[] direction) {
+        return spaceMarineService.getSpaceMarines(page, size, sort, direction);
+
     }
 }

@@ -12,7 +12,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Chapter {
 
-    private long id;
+    private Long id;
 
     @NotNull
     @NotBlank

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import su.arlet.soa2.controller.SpaceMarinePresenter;
 
 @Data
 @AllArgsConstructor
@@ -38,4 +39,11 @@ public class SpaceMarine {
 
     @NotNull
     private Long chapterID; //Поле не может быть null
+
+    static void fromPresenter(SpaceMarinePresenter spaceMarinePresenter) {
+        var coordinates = new Coordinates(spaceMarinePresenter.getCoordinates().getX(), spaceMarinePresenter.getCoordinates().getY());
+        var chapter = new Chapter(null, spaceMarinePresenter.getChapter().getName(), spaceMarinePresenter.getChapter().getMarinesCount());
+        var weaponType = Weapon.valueOf(spaceMarinePresenter.getWeaponType());
+        new SpaceMarine(null, spaceMarinePresenter.getName(), coordinates, spaceMarinePresenter.getCreationDate(), spaceMarinePresenter.getHealth(), spaceMarinePresenter.getHeartCount(), spaceMarinePresenter.getAchievements(), weaponType, chapter.getId());
+    }
 }

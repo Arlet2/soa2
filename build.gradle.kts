@@ -27,6 +27,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.jooq:jooq:3.19.8")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 	compileOnly("org.projectlombok:lombok")
