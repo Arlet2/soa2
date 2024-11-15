@@ -62,8 +62,8 @@ public class SpaceMarineController {
     @GetMapping(
             produces = "application/xml"
             )
-    public SpaceMarineList getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "10") int size, @RequestParam(name="sort", defaultValue = "id") String[] sort, @RequestParam(name="direction", defaultValue = "") String[] direction) {
-        var spaceMarinePage = spaceMarineService.getSpaceMarines(page, size, sort, direction);
+    public SpaceMarineList getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="limit", defaultValue = "10") int limit, @RequestParam(name="sort", defaultValue = "") String[] sort, @RequestParam(name="filter", defaultValue = "") String[] filter) {
+        var spaceMarinePage = spaceMarineService.getSpaceMarines(page, limit, sort, filter);
 
         return (new SpaceMarineList(
                 spaceMarinePage.getContent().stream().map(spaceMarine -> {
@@ -88,9 +88,9 @@ public class SpaceMarineController {
                             )
                     );
                 }).toList(),
-                spaceMarinePage.getTotalPages(),
-                (int) spaceMarinePage.getTotalElements(),
-                spaceMarinePage.getSize()
+                spaceMarinePage.getContent().size(),
+                spaceMarinePage.getNumber(),
+                spaceMarinePage.getTotalPages()
         ));
 
 

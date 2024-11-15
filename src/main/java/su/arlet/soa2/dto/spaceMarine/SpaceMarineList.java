@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class SpaceMarineList {
 
-    @JacksonXmlProperty
+    @JacksonXmlProperty(localName = "spaceMarine")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<SpaceMarinePresenter> spaceMarines;
     @JacksonXmlProperty

@@ -33,7 +33,7 @@ public class SpaceMarineService {
     public Page<SpaceMarine> getSpaceMarines(int page, int size, String[] sortBy, String[] direction) {
         var c = Arrays.stream(sortBy).map(String::toLowerCase)
                 .map(String::trim).map(a -> a.charAt(0)=='-'?
-                        field(a.substring(1)).desc() :
+                        field(a.substring(1) ).desc() :
                         a.charAt(0)=='+' ? field(a.substring(1)).asc()
                                 : field(a).asc()).toList();
         var condition = Arrays.stream(direction).map(String::toLowerCase)
