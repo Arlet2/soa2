@@ -26,7 +26,7 @@ public class SpaceMarineService {
     private SpaceMarineRepo spaceMarineRepo;
     private ChapterService chapterService;
 
-    public SpaceMarine getSpaceMarine(Integer id) {
+    public SpaceMarine getSpaceMarine(Long id) {
         return spaceMarineRepo.getByID(id);
     }
 
@@ -43,7 +43,7 @@ public class SpaceMarineService {
     }
 
     public Long createSpaceMarine(SpaceMarineCreator spaceMarineCreateRequest) {
-        var chapterId = chapterService.getChapterByName(spaceMarineCreateRequest.getChapterName()).getId();
+        var chapter = chapterService.getChapterByName(spaceMarineCreateRequest.getChapterName());
         var coordinates = new Coordinates(spaceMarineCreateRequest.getCoordinates().getX(), spaceMarineCreateRequest.getCoordinates().getY());
         var spaceMarine = new SpaceMarine(null,
                 spaceMarineCreateRequest.getName(),
@@ -53,12 +53,12 @@ public class SpaceMarineService {
                 spaceMarineCreateRequest.getHeartCount(),
                 spaceMarineCreateRequest.getAchievements(),
                 Weapon.valueOf(spaceMarineCreateRequest.getWeaponType()),
-                chapterId
+                chapter
         );
         return spaceMarineRepo.create(spaceMarine);
     }
 
-    public SpaceMarine updateSpaceMarineInPlace(int i, SpaceMarineUpdater spaceMarineUpdater) {
+    public SpaceMarine updateSpaceMarineInPlace(Long i, SpaceMarineUpdater spaceMarineUpdater) {
         var spaceMarine = spaceMarineRepo.getByID(i);
 
         spaceMarineUpdater.getName().ifPresent(spaceMarine::setName);
@@ -73,7 +73,7 @@ public class SpaceMarineService {
         spaceMarineUpdater.getWeaponType().ifPresent(s -> spaceMarine.setWeaponType(Weapon.valueOf(s)));
         spaceMarineUpdater.getChapterName().ifPresent(chapterName -> {
             var chapter = chapterService.getChapterByName(chapterName);
-            spaceMarine.setChapterID(chapter.getId());
+            spaceMarine.setChapter(chapter);
         });
 
 

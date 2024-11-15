@@ -24,7 +24,7 @@ public class ApiExceptionHandler {
      @ExceptionHandler(MethodArgumentNotValidException.class)
      public ResponseEntity<ValidationErrors> handleException(MethodArgumentNotValidException e) {
          ValidationErrors errors  = new ValidationErrors(e.getFieldErrors().stream()
-                 .map(error -> new Error(error.getDefaultMessage()))
+                 .map(error -> new Error(error.getField() +" " + error.getDefaultMessage()))
                  .toList());
          return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(errors);
      }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import su.arlet.soa2.core.Chapter;
 import su.arlet.soa2.core.Coordinates;
 import su.arlet.soa2.core.SpaceMarine;
 import su.arlet.soa2.core.Weapon;
@@ -36,9 +37,8 @@ public class SpaceMarineRepo {
 
 
 
-    public SpaceMarine getByID(int id) {
+    public SpaceMarine getByID(Long id) {
         var query = (dsl.selectFrom(table("space_marines")).where(field("id").eq(id)).getSQL(ParamType.INLINED));
-        System.out.println(query);
         return template.query(
                 query,
                 new SpaceMarineRowMapper()
@@ -67,14 +67,14 @@ public class SpaceMarineRepo {
 
                 spaceMarine.getName(), spaceMarine.getCoordinates().getX(), spaceMarine.getCoordinates().getY(),
                 Timestamp.from(Instant.now()), spaceMarine.getHealth(), spaceMarine.getHeartCount(),
-                spaceMarine.getAchievements(), spaceMarine.getWeaponType().toString(), spaceMarine.getChapterID()
+                spaceMarine.getAchievements(), spaceMarine.getWeaponType().toString(), spaceMarine.getChapter().getId()
         );
     }
 
     public Page<SpaceMarine> findAll(int page, int size, Collection<SortField<Object>> sortBy, Condition condition) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        String query = dsl.selectFrom(table("space_marines")).where(condition).orderBy(sortBy).limit(size).offset(page*size).getSQL(ParamType.INLINED);
+        String query = dsl.select().from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.id").where(condition).orderBy(sortBy).limit(size).offset(page*size).getSQL(ParamType.INLINED);
         System.out.println(query);
         List<SpaceMarine> spaceMarines = template.query(query, new SpaceMarineRowMapper());
 
@@ -93,7 +93,7 @@ public class SpaceMarineRepo {
                 .set(field("heart_count"), spaceMarine.getHeartCount())
                 .set(field("achievements"), spaceMarine.getAchievements())
                 .set(field("weapon_type"), spaceMarine.getWeaponType().toString())
-                .set(field("chapter_id"), spaceMarine.getChapterID())
+                .set(field("chapter_id"), spaceMarine.getChapter().getId())
                 .where(field("id").eq(spaceMarine.getId()))
                 .getSQL(ParamType.INLINED);
 
@@ -107,6 +107,7 @@ public class SpaceMarineRepo {
         public SpaceMarine mapRow(ResultSet rs, int rowNum) throws SQLException {
             var coordinates = new Coordinates(rs.getFloat("x"), rs.getInt("y"));
             var weapon = Weapon.valueOf(rs.getString("weapon_type"));
+            var chapter = new Chapter(rs.getLong("chapter_id"), rs.getString("name"), rs.getInt("marines_count"));
 
             return new SpaceMarine(
                     rs.getInt("id"),
@@ -117,7 +118,7 @@ public class SpaceMarineRepo {
                     rs.getLong("heart_count"),
                     rs.getString("achievements"),
                     weapon,
-                    rs.getLong("chapter_id")
+                    chapter
             );
         }
     }

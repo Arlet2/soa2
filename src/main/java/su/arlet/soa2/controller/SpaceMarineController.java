@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import su.arlet.soa2.core.SpaceMarine;
+import su.arlet.soa2.dto.IdWrapper;
 import su.arlet.soa2.dto.chapter.ChapterPresenter;
 import su.arlet.soa2.dto.coordinates.CoordinatesPresenter;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineCreator;
+import su.arlet.soa2.dto.spaceMarine.SpaceMarineList;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarinePresenter;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineUpdater;
 import su.arlet.soa2.service.ChapterService;
@@ -26,23 +28,26 @@ public class SpaceMarineController {
                path = "/{id}",
               produces = "application/xml"
     )
-    public SpaceMarinePresenter getSpaceMarine(@PathVariable(name="id") int id) {
+    public SpaceMarinePresenter getSpaceMarine(@PathVariable(name="id") Long id) {
         var spaceMarine = spaceMarineService.getSpaceMarine(id);
         var coordinatesPresenter = new CoordinatesPresenter(
                 spaceMarine.getCoordinates().getX(),
                 spaceMarine.getCoordinates().getY()
         );
-        var chapter = chapterService.getChapter(spaceMarine.getChapterID());
 
         return new SpaceMarinePresenter(
+                id,
                 spaceMarine.getName(),
                 coordinatesPresenter,
-                spaceMarine.getCreationDate(),
+                spaceMarine.getCreationDate().toString(),
                 spaceMarine.getHealth(),
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
                 spaceMarine.getWeaponType().name(),
-                chapter.getName()
+                new ChapterPresenter(
+                        spaceMarine.getChapter().getName(),
+                        spaceMarine.getChapter().getMarinesCount()
+                )
         );
     }
 
@@ -50,15 +55,45 @@ public class SpaceMarineController {
             consumes = "application/xml",
             produces = "application/xml"
     )
-    public Long createSpaceMarine(@RequestBody @Validated SpaceMarineCreator spaceMarine) {
-        return spaceMarineService.createSpaceMarine(spaceMarine);
+    public IdWrapper createSpaceMarine(@RequestBody @Validated SpaceMarineCreator spaceMarine) {
+        return new IdWrapper(spaceMarineService.createSpaceMarine(spaceMarine));
     }
 
     @GetMapping(
             produces = "application/xml"
             )
-    public Page<SpaceMarine> getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "10") int size, @RequestParam(name="sort", defaultValue = "id") String[] sort, @RequestParam(name="direction", defaultValue = "") String[] direction) {
-        return spaceMarineService.getSpaceMarines(page, size, sort, direction);
+    public SpaceMarineList getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="size", defaultValue = "10") int size, @RequestParam(name="sort", defaultValue = "id") String[] sort, @RequestParam(name="direction", defaultValue = "") String[] direction) {
+        var spaceMarinePage = spaceMarineService.getSpaceMarines(page, size, sort, direction);
+
+        return (new SpaceMarineList(
+                spaceMarinePage.getContent().stream().map(spaceMarine -> {
+                    var coordinatesPresenter = new CoordinatesPresenter(
+                            spaceMarine.getCoordinates().getX(),
+                            spaceMarine.getCoordinates().getY()
+                    );
+
+
+                    return new SpaceMarinePresenter(
+                            spaceMarine.getId().longValue(),
+                            spaceMarine.getName(),
+                            coordinatesPresenter,
+                            spaceMarine.getCreationDate().toString(),
+                            spaceMarine.getHealth(),
+                            spaceMarine.getHeartCount(),
+                            spaceMarine.getAchievements(),
+                            spaceMarine.getWeaponType().name(),
+                            new ChapterPresenter(
+                                    spaceMarine.getChapter().getName(),
+                                    spaceMarine.getChapter().getMarinesCount()
+                            )
+                    );
+                }).toList(),
+                spaceMarinePage.getTotalPages(),
+                (int) spaceMarinePage.getTotalElements(),
+                spaceMarinePage.getSize()
+        ));
+
+
     }
 
     @PatchMapping(
@@ -66,25 +101,27 @@ public class SpaceMarineController {
             consumes = "application/xml",
             produces = "application/xml"
     )
-    public SpaceMarinePresenter updateSpaceMarine(@PathVariable(name="id") int id, @RequestBody SpaceMarineUpdater spaceMarineUpdater) {
+    public SpaceMarinePresenter updateSpaceMarine(@PathVariable(name="id") Long id, @RequestBody SpaceMarineUpdater spaceMarineUpdater) {
         var spaceMarine =  spaceMarineService.updateSpaceMarineInPlace(id, spaceMarineUpdater);
         var coordinatesPresenter = new CoordinatesPresenter(
                 spaceMarine.getCoordinates().getX(),
                 spaceMarine.getCoordinates().getY()
         );
-        var chapter = chapterService.getChapter(spaceMarine.getChapterID());
 
-        var chapterPresenter = new ChapterPresenter(chapter.getName(), chapter.getMarinesCount());
 
         return new SpaceMarinePresenter(
+                id,
                 spaceMarine.getName(),
                 coordinatesPresenter,
-                spaceMarine.getCreationDate(),
+                spaceMarine.getCreationDate().toString(),
                 spaceMarine.getHealth(),
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
                 spaceMarine.getWeaponType().name(),
-                chapter.getName()
+                new ChapterPresenter(
+                        spaceMarine.getChapter().getName(),
+                        spaceMarine.getChapter().getMarinesCount()
+                )
         );
     }
 }

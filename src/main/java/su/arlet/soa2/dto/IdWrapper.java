@@ -1,6 +1,8 @@
 package su.arlet.soa2.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 public class IdWrapper {
     @JacksonXmlProperty(localName = "id")

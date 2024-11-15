@@ -2,9 +2,11 @@ package su.arlet.soa2.core.exceptions.handler;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.util.List;
 
+@JacksonXmlRootElement(localName = "validationErrors")
 public class ValidationErrors {
 
     @JacksonXmlElementWrapper(useWrapping = false)

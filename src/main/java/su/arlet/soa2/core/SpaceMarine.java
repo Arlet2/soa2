@@ -38,5 +38,5 @@ public class SpaceMarine {
     private Weapon weaponType; //Поле может быть null
 
     @NotNull
-    private Long chapterID; //Поле не может быть null
+    private Chapter chapter; //Поле не может быть null
 }
