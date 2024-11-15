@@ -38,7 +38,7 @@ public class SpaceMarineRepo {
 
 
     public SpaceMarine getByID(Long id) {
-        var query = (dsl.selectFrom(table("space_marines")).where(field("id").eq(id)).getSQL(ParamType.INLINED));
+        var query = (dsl.select().from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.id").where(field("space_marines.id").eq(id)).getSQL(ParamType.INLINED));
         return template.query(
                 query,
                 new SpaceMarineRowMapper()
