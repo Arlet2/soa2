@@ -45,6 +45,11 @@ public class SpaceMarineRepo {
         ).getFirst();
     }
 
+    public void deleteByID(Long id) {
+        var query = dsl.deleteFrom(table("space_marines")).where(field("id").eq(id)).getSQL(ParamType.INLINED);
+        template.update(query);
+    }
+
     public Long create(SpaceMarine spaceMarine) {
         return template.queryForObject(
                 """

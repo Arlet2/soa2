@@ -59,6 +59,14 @@ public class SpaceMarineController {
         return new IdWrapper(spaceMarineService.createSpaceMarine(spaceMarine));
     }
 
+    @DeleteMapping(
+            path = "/{id}",
+            produces = "application/xml"
+    )
+    public void deleteSpaceMarine(@PathVariable(name="id") Long id) {
+      spaceMarineService.deleteSpaceMarine(id);
+    }
+
     @GetMapping(
             produces = "application/xml"
             )

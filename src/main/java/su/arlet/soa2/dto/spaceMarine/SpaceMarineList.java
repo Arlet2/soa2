@@ -14,8 +14,8 @@ import java.util.List;
 @Data
 public class SpaceMarineList {
 
+    @JacksonXmlElementWrapper(localName = "spaceMarines")
     @JacksonXmlProperty(localName = "spaceMarine")
-    @JacksonXmlElementWrapper(useWrapping = false)
     private List<SpaceMarinePresenter> spaceMarines;
     @JacksonXmlProperty
     private int count;
