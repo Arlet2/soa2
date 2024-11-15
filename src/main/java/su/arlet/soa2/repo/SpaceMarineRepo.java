@@ -36,16 +36,13 @@ public class SpaceMarineRepo {
 
 
 
-    public SpaceMarine getByID(Integer id) {
-        var spaceMarines = template.query(
-                """
-                            SELECT * FROM space_marines
-                            WHERE id = $1
-                        """,
-                new SpaceMarineRowMapper(), id
-        );
-
-        return spaceMarines.getFirst();
+    public SpaceMarine getByID(int id) {
+        var query = (dsl.selectFrom(table("space_marines")).where(field("id").eq(id)).getSQL(ParamType.INLINED));
+        System.out.println(query);
+        return template.query(
+                query,
+                new SpaceMarineRowMapper()
+        ).getFirst();
     }
 
     public Long create(SpaceMarine spaceMarine) {
@@ -84,6 +81,25 @@ public class SpaceMarineRepo {
         long total = template.queryForObject("SELECT count(*) FROM space_marines", Long.class);
 
         return new PageImpl<>(spaceMarines, pageRequest, total);
+    }
+
+    public SpaceMarine updatePatch(SpaceMarine spaceMarine) {
+        var query = dsl.update(table("space_marines"))
+                .set(field("name"), spaceMarine.getName())
+                .set(field("x"), spaceMarine.getCoordinates().getX())
+                .set(field("y"), spaceMarine.getCoordinates().getY())
+                .set(field("creation_date"), Timestamp.valueOf(spaceMarine.getCreationDate()))
+                .set(field("health"), spaceMarine.getHealth())
+                .set(field("heart_count"), spaceMarine.getHeartCount())
+                .set(field("achievements"), spaceMarine.getAchievements())
+                .set(field("weapon_type"), spaceMarine.getWeaponType().toString())
+                .set(field("chapter_id"), spaceMarine.getChapterID())
+                .where(field("id").eq(spaceMarine.getId()))
+                .getSQL(ParamType.INLINED);
+
+        template.update(query);
+
+        return spaceMarine;
     }
 
     private static class SpaceMarineRowMapper implements RowMapper<SpaceMarine> {

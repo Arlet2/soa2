@@ -1,0 +1,456 @@
+openapi: 3.0.0
+info:
+  title: Space Marine API
+  version: 1.0.0
+  description: API РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РєРѕР»Р»РµРєС†РёРµР№ РѕР±СЉРµРєС‚РѕРІ РєР»Р°СЃСЃР° SpaceMarine Рё РІС‹РїРѕР»РЅРµРЅРёСЏ РѕРїРµСЂР°С†РёР№ СЃ РґРµСЃР°РЅС‚РЅРёРєР°РјРё РЅР° Р·РІРµР·РґРѕР»РµС‚Рµ.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /space-marines:
+    get:
+      summary: РџРѕР»СѓС‡РёС‚СЊ РјР°СЃСЃРёРІ SpaceMarine СЃ РїРѕРґРґРµСЂР¶РєРѕР№ С„РёР»СЊС‚СЂР°С†РёРё, СЃРѕСЂС‚РёСЂРѕРІРєРё Рё РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕРіРѕ РІС‹РІРѕРґР°
+      tags:
+        - SpaceMarine
+      parameters:
+        - name: page
+          in: query
+          description: РќРѕРјРµСЂ СЃС‚СЂР°РЅРёС†С‹ РґР»СЏ РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕРіРѕ РІС‹РІРѕРґР°
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Р Р°Р·РјРµСЂ СЃС‚СЂР°РЅРёС†С‹
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sort
+          in: query
+          description: РџРѕР»Рµ РґР»СЏ СЃРѕСЂС‚РёСЂРѕРІРєРё (РЅР°РїСЂРёРјРµСЂ +name, -name)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              default: name
+
+        - name: filter
+          in: query
+          description: РЈСЃР»РѕРІРёСЏ РґР»СЏ С„РёР»СЊС‚СЂР°С†РёРё (РЅР°РїСЂРёРјРµСЂ health>50, age < 30, heart_count >= 50000, creation_date == "2024-05-06", health <= 2000, health != 50)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              default: health>50
+      responses:
+        '200':
+          description: РњР°СЃСЃРёРІ РґРµСЃР°РЅС‚РЅРёРєРѕРІ СѓСЃРїРµС€РЅРѕ РІРѕР·РІСЂР°С‰РµРЅ
+          content:
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: page
+                items:
+                  $ref: '#/components/schemas/SpaceMarinePagination'
+        '400':
+          description: РќРµРІРµСЂРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ Р·Р°РїСЂРѕСЃР°
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+    post:
+      summary: Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІРѕРіРѕ SpaceMarine
+      tags:
+        - SpaceMarine
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SpaceMarineCreate'
+      responses:
+        '201':
+          description: SpaceMarine СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅ
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: id
+                type: integer
+                description: ID СЃРѕР·РґР°РЅРЅРѕРіРѕ SpaceMarine
+        '400':
+          description: РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ SpaceMarine
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: РћС€РёР±РєР° РІР°Р»РёРґР°С†РёРё
+          content:
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: validationErrors
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Error'
+
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+  /space-marines/{id}:
+    get:
+      summary: РџРѕР»СѓС‡РёС‚СЊ SpaceMarine РїРѕ РР”
+      tags:
+        - SpaceMarine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: SpaceMarine РЅР°Р№РґРµРЅ
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+        '400':
+          description: РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: SpaceMarine РЅРµ РЅР°Р№РґРµРЅ
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+    patch:
+      summary: РћР±РЅРѕРІРёС‚СЊ SpaceMarine РїРѕ РР”
+      tags:
+        - SpaceMarine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SpaceMarineCreate'
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+          description: SpaceMarine СѓСЃРїРµС€РЅРѕ РѕР±РЅРѕРІР»С‘РЅ
+        '400':
+          description: РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ SpaceMarine
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: SpaceMarine РЅРµ РЅР°Р№РґРµРЅ
+        '422':
+          description: РћС€РёР±РєР° РІР°Р»РёРґР°С†РёРё
+          content:
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: validationErrors
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/Error'
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+    delete:
+      summary: РЈРґР°Р»РёС‚СЊ SpaceMarine РїРѕ РР”
+      tags:
+        - SpaceMarine
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: SpaceMarine СѓСЃРїРµС€РЅРѕ СѓРґР°Р»С‘РЅ
+        '404':
+          description: SpaceMarine РЅРµ РЅР°Р№РґРµРЅ
+        '400':
+          description: РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+  /space-marines/chapters/{chapterName}:
+    delete:
+      summary: РЈРґР°Р»РёС‚СЊ Р»СЋР±РѕР№ SpaceMarine СЃ Р·Р°РґР°РЅРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј РїРѕР»СЏ chapter
+      tags:
+        - SpaceMarine
+      parameters:
+        - name: chapterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SpaceMarine СѓСЃРїРµС€РЅРѕ СѓРґР°Р»С‘РЅ
+        '404':
+          description: SpaceMarine РЅРµ РЅР°Р№РґРµРЅ
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+  /space-marines/creation-date/min:
+    get:
+      summary: Р’РµСЂРЅСѓС‚СЊ Р»СЋР±РѕР№ SpaceMarine СЃ РјРёРЅРёРјР°Р»СЊРЅРѕР№ РґР°С‚РѕР№ СЃРѕР·РґР°РЅРёСЏ
+      tags:
+        - SpaceMarine
+      responses:
+        '200':
+          description: SpaceMarine СЃ РјРёРЅРёРјР°Р»СЊРЅРѕР№ РґР°С‚РѕР№ СЃРѕР·РґР°РЅРёСЏ РЅР°Р№РґРµРЅ
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+        '404':
+          description: SpaceMarine РЅРµ РЅР°Р№РґРµРЅ
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+  /space-marines/weapon-types/unique:
+    get:
+      summary: Р’РµСЂРЅСѓС‚СЊ РјР°СЃСЃРёРІ СѓРЅРёРєР°Р»СЊРЅС‹С… Р·РЅР°С‡РµРЅРёР№ РїРѕР»СЏ weaponType
+      tags:
+        - SpaceMarine
+      responses:
+        '200':
+          description: РЈРЅРёРєР°Р»СЊРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РїРѕР»РµР№ weaponType СѓСЃРїРµС€РЅРѕ РІРѕР·РІСЂР°С‰РµРЅС‹
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WeaponTypes'
+        '500':
+          description: Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°
+  /weapon-types:
+    get:
+      summary: Р’РµСЂРЅСѓС‚СЊ РІСЃРµ РІРѕР·РјРѕР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РїРѕР»СЏ weaponType
+      tags:
+        - SpaceMarine
+      responses:
+        '200':
+          description: РЈСЃРїРµС€РЅС‹Р№ РѕС‚РІРµС‚, СЃРѕРґРµСЂР¶Р°С‰РёР№ СЃРїРёСЃРѕРє РІСЃРµС… РґРѕСЃС‚СѓРїРЅС‹С… С‚РёРїРѕРІ РѕСЂСѓР¶РёСЏ
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WeaponTypes'
+        '500':
+          description: РћС€РёР±РєР° СЃРµСЂРІРµСЂР°
+
+components:
+  schemas:
+    SpaceMarine:
+      type: object
+      xml:
+        name: spaceMarine
+      required:
+        - name
+        - coordinates
+        - heartCount
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          description: РЈРЅРёРєР°Р»СЊРЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РґРµСЃР°РЅС‚РЅРёРєР°
+        name:
+          type: string
+          description: РРјСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+          minLength: 1
+          nullable: false
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date-time
+          description: Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р°
+        health:
+          type: integer
+          minimum: 1
+          description: Р—РґРѕСЂРѕРІСЊРµ РґРµСЃР°РЅС‚РЅРёРєР°
+        heartCount:
+          type: integer
+          minimum: 1
+          maximum: 3
+          description: РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРµСЂРґРµС† РґРµСЃР°РЅС‚РЅРёРєР°
+        achievements:
+          type: string
+          nullable: true
+          description: Р”РѕСЃС‚РёР¶РµРЅРёСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+        weaponType:
+          type: string
+          enum:
+            - HEAVY_BOLTGUN
+            - GRENADE_LAUNCHER
+            - MULTI_MELTA
+          nullable: true
+          description: РўРёРї РѕСЂСѓР¶РёСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+        chapter:
+          $ref: '#/components/schemas/Chapter'
+          nullable: true
+
+
+    SpaceMarinePagination:
+      type: object
+      xml:
+        name: result
+      properties:
+        result:
+          type: array
+          description: Р РµР·СѓР»СЊС‚Р°С‚ РїР°РіРёРЅР°С†РёРё
+          xml:
+            name: spaceMarines
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/SpaceMarine'
+        count:
+          type: integer
+          default: 1
+          description: "РљРѕР»РёС‡РµСЃС‚РІРѕ РІРѕР·РІСЂР°С‰РµРЅРЅС‹С… СЃСѓС‰РЅРѕСЃС‚РµР№"
+        currentPage:
+          type: integer
+          default: 1
+          description: РўРµРєСѓС‰Р°СЏ СЃС‚СЂР°РЅРёС†Р°
+        totalPages:
+          type: integer
+          default: 100
+          description: РћР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂР°РЅРёС†
+
+
+
+
+    SpaceMarineCreate:
+      type: object
+      xml:
+        name: spaceMarine
+      required:
+        - name
+        - coordinates
+        - heartCount
+      properties:
+        name:
+          type: string
+          description: РРјСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+          minLength: 1
+          nullable: false
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        health:
+          type: integer
+          minimum: 1
+          description: Р—РґРѕСЂРѕРІСЊРµ РґРµСЃР°РЅС‚РЅРёРєР°
+        heartCount:
+          type: integer
+          minimum: 1
+          maximum: 3
+          description: РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРµСЂРґРµС† РґРµСЃР°РЅС‚РЅРёРєР°
+        achievements:
+          type: string
+          nullable: true
+          description: Р”РѕСЃС‚РёР¶РµРЅРёСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+        weaponType:
+          type: string
+          enum:
+            - HEAVY_BOLTGUN
+            - GRENADE_LAUNCHER
+            - MULTI_MELTA
+          nullable: true
+          description: РўРёРї РѕСЂСѓР¶РёСЏ РґРµСЃР°РЅС‚РЅРёРєР°
+        chapter:
+          $ref: '#/components/schemas/Chapter'
+          nullable: true
+
+    Coordinates:
+      required:
+        - x
+        - y
+      type: object
+      properties:
+        x:
+          type: number
+          format: float
+          description: РљРѕРѕСЂРґРёРЅР°С‚Р° X, Р±РѕР»СЊС€Рµ -674
+          minimum: -674
+        y:
+          type: number
+          format: float
+          description: РљРѕРѕСЂРґРёРЅР°С‚Р° Y, РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ 883
+          maximum: 883
+
+    WeaponTypes:
+      type: object
+      xml:
+        name: weaponTypes
+      properties:
+        HEAVY_BOLTGUN:
+          type: string
+          xml:
+            name: HEAVY_BOLTGUN
+          example: heavyBoltgun
+        GRENADE_LAUNCHER:
+          type: string
+          xml:
+            name: GRENADE_LAUNCHER
+          example: grenadeLauncher
+        MULTI_MELTA:
+          type: string
+          xml:
+            name: MULTI_MELTA
+          example: multiMelta
+
+    Error:
+      type: object
+      xml:
+        name: error
+      properties:
+        reason:
+          type: string
+          description: РћРїРёСЃР°РЅРёРµ РѕС€РёР±РєРё
+
+
+    Chapter:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: РќР°Р·РІР°РЅРёРµ РіР»Р°РІС‹
+          minLength: 1
+        marinesCount:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          description: РљРѕР»РёС‡РµСЃС‚РІРѕ РґРµСЃР°РЅС‚РЅРёРєРѕРІ РІ РіР»Р°РІРµ

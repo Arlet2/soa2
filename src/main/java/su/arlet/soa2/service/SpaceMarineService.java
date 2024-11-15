@@ -1,22 +1,18 @@
 package su.arlet.soa2.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
-import org.jooq.SortField;
-import org.jooq.SortOrder;
 import org.jooq.impl.DSL;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import su.arlet.soa2.controller.SpaceMarineCreator;
-import su.arlet.soa2.controller.SpaceMarinePresenter;
-import su.arlet.soa2.core.Chapter;
+import su.arlet.soa2.dto.spaceMarine.SpaceMarineCreator;
 import su.arlet.soa2.core.Coordinates;
 import su.arlet.soa2.core.SpaceMarine;
 import su.arlet.soa2.core.Weapon;
+import su.arlet.soa2.dto.spaceMarine.SpaceMarineUpdater;
 import su.arlet.soa2.repo.SpaceMarineRepo;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static org.jooq.impl.DSL.*;
@@ -47,12 +43,12 @@ public class SpaceMarineService {
     }
 
     public Long createSpaceMarine(SpaceMarineCreator spaceMarineCreateRequest) {
-        var chapterId = chapterService.findChapterByName(spaceMarineCreateRequest.getChapterName()).getId();
+        var chapterId = chapterService.getChapterByName(spaceMarineCreateRequest.getChapterName()).getId();
         var coordinates = new Coordinates(spaceMarineCreateRequest.getCoordinates().getX(), spaceMarineCreateRequest.getCoordinates().getY());
         var spaceMarine = new SpaceMarine(null,
                 spaceMarineCreateRequest.getName(),
                 coordinates,
-                spaceMarineCreateRequest.getCreationDate(),
+                LocalDateTime.now(),
                 spaceMarineCreateRequest.getHealth(),
                 spaceMarineCreateRequest.getHeartCount(),
                 spaceMarineCreateRequest.getAchievements(),
@@ -60,5 +56,27 @@ public class SpaceMarineService {
                 chapterId
         );
         return spaceMarineRepo.create(spaceMarine);
+    }
+
+    public SpaceMarine updateSpaceMarineInPlace(int i, SpaceMarineUpdater spaceMarineUpdater) {
+        var spaceMarine = spaceMarineRepo.getByID(i);
+
+        spaceMarineUpdater.getName().ifPresent(spaceMarine::setName);
+        spaceMarineUpdater.getCoordinates().ifPresent(coordinatesPresenter -> {
+            spaceMarine.getCoordinates().setX(coordinatesPresenter.getX());
+            spaceMarine.getCoordinates().setY(coordinatesPresenter.getY());
+        });
+        spaceMarineUpdater.getCreationDate().ifPresent(spaceMarine::setCreationDate);
+        spaceMarineUpdater.getHealth().ifPresent(spaceMarine::setHealth);
+        spaceMarineUpdater.getHeartCount().ifPresent(spaceMarine::setHeartCount);
+        spaceMarineUpdater.getAchievements().ifPresent(spaceMarine::setAchievements);
+        spaceMarineUpdater.getWeaponType().ifPresent(s -> spaceMarine.setWeaponType(Weapon.valueOf(s)));
+        spaceMarineUpdater.getChapterName().ifPresent(chapterName -> {
+            var chapter = chapterService.getChapterByName(chapterName);
+            spaceMarine.setChapterID(chapter.getId());
+        });
+
+
+        return spaceMarine;
     }
 }

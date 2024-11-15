@@ -9,6 +9,7 @@ import su.arlet.soa2.core.Chapter;
 
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import static org.jooq.impl.DSL.*;
 
@@ -24,7 +25,7 @@ public class ChapterRepo {
 
     public Chapter getByID(Long id) {
         return template.query(
-                dsl.select().from(table("chapters")).where(field("id").eq(id)).getSQL(),
+                dsl.select().from(table("chapters")).where(field("id").eq(id)).getSQL(ParamType.INLINED),
                 (rs, rowNum) -> new Chapter(
                         rs.getLong("id"),
                         rs.getString("name"),
@@ -41,14 +42,14 @@ public class ChapterRepo {
         ).getFirst();
     }
 
-    public Chapter findByName(String name) {
+    public Optional<Chapter> findByName(String name) {
         return template.query(
-                dsl.select().from(table("chapters")).where(field("name").eq(name)).getSQL(),
-               (rs, rowNum) -> new Chapter(
-                       rs.getLong("id"),
-                      rs.getString("name"),
-                       rs.getLong("marines_count"))
-                ).getFirst();
+                dsl.select().from(table("chapters")).where(field("name").eq(name)).getSQL(ParamType.INLINED),
+                (rs, rowNum) -> new Chapter(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getLong("marines_count"))
+        ).stream().findFirst();
     }
 
 }
