@@ -14,6 +14,7 @@ import su.arlet.soa2.repo.SpaceMarineRepo;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.jooq.impl.DSL.*;
 
@@ -61,6 +62,19 @@ public class SpaceMarineService {
         );
         return spaceMarineRepo.create(spaceMarine);
     }
+
+    public SpaceMarine getFirstCreatedSpaceMarine() {
+        return spaceMarineRepo.getFirstCreatedSpaceMarine();
+    }
+
+    public List<Weapon> getUniqueWeaponTypes() {
+        return spaceMarineRepo.getUniqueWeaponTypes();
+    }
+
+    public void deleteSpaceMarineByChapterName(String chapterName) {
+        spaceMarineRepo.deleteByChapterName(chapterName);
+    }
+
 
     public SpaceMarine updateSpaceMarineInPlace(Long i, SpaceMarineUpdater spaceMarineUpdater) {
         var spaceMarine = spaceMarineRepo.getByID(i);

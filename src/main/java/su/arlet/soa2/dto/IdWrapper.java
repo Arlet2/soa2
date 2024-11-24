@@ -4,8 +4,10 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
+@JacksonXmlRootElement(localName = "id")
 public class IdWrapper {
-    @JacksonXmlProperty(localName = "id")
+
+    @JacksonXmlElementWrapper(useWrapping = false)
     private Long id;
 
     public IdWrapper(Long id) {

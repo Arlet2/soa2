@@ -50,6 +50,21 @@ public class SpaceMarineRepo {
         template.update(query);
     }
 
+    public void deleteByChapterName(String name) {
+        var query = dsl.deleteFrom(table("space_marines")).where(field("chapter_id").eq(dsl.select(field("id")).from(table("chapters")).where(field("name").eq(name)))).getSQL(ParamType.INLINED);
+        template.update(query);
+    }
+
+    public SpaceMarine getFirstCreatedSpaceMarine(){
+        var query = dsl.select().from(table("space_marines")).orderBy(field("creation_date").asc()).limit(1).getSQL(ParamType.INLINED);
+        return template.query(query, new SpaceMarineRowMapper()).getFirst();
+    }
+
+    public List<Weapon> getUniqueWeaponTypes() {
+        var query = dsl.selectDistinct(field("weapon_type")).from(table("space_marines")).getSQL(ParamType.INLINED);
+        return template.query(query, (rs, rowNum) -> Weapon.valueOf(rs.getString("weapon_type")));
+    }
+
     public Long create(SpaceMarine spaceMarine) {
         return template.queryForObject(
                 """

@@ -13,6 +13,7 @@ import su.arlet.soa2.dto.spaceMarine.SpaceMarineCreator;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineList;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarinePresenter;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineUpdater;
+import su.arlet.soa2.dto.weapon.WeaponTypes;
 import su.arlet.soa2.service.ChapterService;
 import su.arlet.soa2.service.SpaceMarineService;
 
@@ -103,6 +104,49 @@ public class SpaceMarineController {
 
 
     }
+    @DeleteMapping(
+            path = "/chapters/{chapterName}",
+            produces = "application/xml"
+    )
+    public void deleteSpaceMarinesByChapter(@PathVariable(name="chapterName") String chapterName) {
+        spaceMarineService.deleteSpaceMarineByChapterName(chapterName);
+    }
+
+    @GetMapping(
+            path = "creation-date/min",
+            produces = "application/xml"
+    )
+    public SpaceMarinePresenter getSpaceMarineWithMinCreationDate() {
+        var spaceMarine = spaceMarineService.getFirstCreatedSpaceMarine();
+        var coordinatesPresenter = new CoordinatesPresenter(
+                spaceMarine.getCoordinates().getX(),
+                spaceMarine.getCoordinates().getY()
+        );
+
+        return new SpaceMarinePresenter(
+                spaceMarine.getId().longValue(),
+                spaceMarine.getName(),
+                coordinatesPresenter,
+                spaceMarine.getCreationDate().toString(),
+                spaceMarine.getHealth(),
+                spaceMarine.getHeartCount(),
+                spaceMarine.getAchievements(),
+                spaceMarine.getWeaponType().name(),
+                new ChapterPresenter(
+                        spaceMarine.getChapter().getName(),
+                        spaceMarine.getChapter().getMarinesCount()
+                )
+        );
+    }
+
+    @GetMapping(
+            path = "weapon-types/unique",
+            produces = "application/xml"
+    )
+    public WeaponTypes getUniqueWeaponTypes() {
+        return new WeaponTypes(spaceMarineService.getUniqueWeaponTypes());
+    }
+
 
     @PatchMapping(
             path = "/{id}",
