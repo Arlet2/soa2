@@ -103,7 +103,7 @@ public class SpaceMarineService {
             spaceMarine.setChapter(chapter);
         });
 
-
+        spaceMarineRepo.updatePatch(spaceMarine);
         return spaceMarine;
     }
 }
