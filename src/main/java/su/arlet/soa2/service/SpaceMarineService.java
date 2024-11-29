@@ -5,6 +5,7 @@ import org.jooq.Condition;
 import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import su.arlet.soa2.dto.Filters;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineCreator;
 import su.arlet.soa2.core.Coordinates;
 import su.arlet.soa2.core.SpaceMarine;
@@ -35,14 +36,13 @@ public class SpaceMarineService {
         spaceMarineRepo.deleteByID(id);
     }
 
-    public Page<SpaceMarine> getSpaceMarines(int page, int size, String[] sortBy, String[] direction) {
+    public Page<SpaceMarine> getSpaceMarines(int page, int size, String[] sortBy, Filters direction) {
         var c = Arrays.stream(sortBy).map(String::toLowerCase)
                 .map(String::trim).map(a -> a.charAt(0)=='-'?
                         field(a.substring(1) ).desc() :
                         a.charAt(0)=='+' ? field(a.substring(1)).asc()
                                 : field(a).asc()).toList();
-        var condition = Arrays.stream(direction).map(String::toLowerCase)
-                .map(DSL::condition)
+        var condition = direction.getPredicates().stream()
                 .reduce(noCondition(), Condition::and);
         return spaceMarineRepo.findAll(page, size, c, condition);
     }

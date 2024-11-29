@@ -1,11 +1,14 @@
 package su.arlet.soa2.controller;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import su.arlet.soa2.core.SpaceMarine;
+import su.arlet.soa2.dto.Filters;
 import su.arlet.soa2.dto.IdWrapper;
 import su.arlet.soa2.dto.chapter.ChapterPresenter;
 import su.arlet.soa2.dto.coordinates.CoordinatesPresenter;
@@ -72,7 +75,8 @@ public class SpaceMarineController {
             produces = "application/xml"
             )
     public SpaceMarineList getSpaceMarines (@RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="limit", defaultValue = "10") int limit, @RequestParam(name="sort", defaultValue = "") String[] sort, @RequestParam(name="filter", defaultValue = "") String[] filter) {
-        var spaceMarinePage = spaceMarineService.getSpaceMarines(page, limit, sort, filter);
+
+        var spaceMarinePage = spaceMarineService.getSpaceMarines(page, limit, sort, new Filters(filter));
 
         return (new SpaceMarineList(
                 spaceMarinePage.getContent().stream().map(spaceMarine -> {

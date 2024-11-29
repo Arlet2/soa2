@@ -38,7 +38,7 @@ public class SpaceMarineRepo {
 
 
     public SpaceMarine getByID(Long id) {
-        var query = (dsl.select().from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.id").where(field("space_marines.id").eq(id)).getSQL(ParamType.INLINED));
+        var query = (dsl.select().from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.chapter_id").where(field("space_marines.id").eq(id)).getSQL(ParamType.INLINED));
         return template.query(
                 query,
                 new SpaceMarineRowMapper()
@@ -66,37 +66,44 @@ public class SpaceMarineRepo {
     }
 
     public Long create(SpaceMarine spaceMarine) {
-        return template.queryForObject(
-                """
-                        INSERT INTO space_marines
-                        (
-                            name, x, y,
-                            creation_date, health, heart_count,
-                            achievements, weapon_type, chapter_id
-                        )
-                        VALUES
-                        (
-                            ?, ?, ?,
-                            ?, ?, ?,
-                            ?, CAST(? AS weapon), ?
-                        )
-                        
-                        RETURNING id
-                        """,
-                Long.class,
 
-                spaceMarine.getName(), spaceMarine.getCoordinates().getX(), spaceMarine.getCoordinates().getY(),
-                Timestamp.from(Instant.now()), spaceMarine.getHealth(), spaceMarine.getHeartCount(),
-                spaceMarine.getAchievements(), spaceMarine.getWeaponType().toString(), spaceMarine.getChapter().getId()
-        );
+        var query = dsl.insertInto(table("space_marines"))
+                .columns(
+                        field("name"),
+                        field("x"),
+                        field("y"),
+                        field("creation_date"),
+                        field("health"),
+                        field("heart_count"),
+                        field("achievements"),
+                        field("weapon_type"),
+                        field("chapter_id")
+                )
+                .values(
+                        spaceMarine.getName(),
+                        spaceMarine.getCoordinates().getX(),
+                        spaceMarine.getCoordinates().getY(),
+                        Timestamp.from(Instant.now()),
+                        spaceMarine.getHealth(),
+                        spaceMarine.getHeartCount(),
+                        spaceMarine.getAchievements(),
+                        spaceMarine.getWeaponType().toString(),
+                        spaceMarine.getChapter().getId()
+                ).returning(field("id")).getSQL(ParamType.INLINED);
+        return template.queryForObject(query, Long.class);
     }
 
     public Page<SpaceMarine> findAll(int page, int size, Collection<SortField<Object>> sortBy, Condition condition) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        String query = dsl.select().from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.id").where(condition).orderBy(sortBy).limit(size).offset(page*size).getSQL(ParamType.INLINED);
+        String query = dsl.select(
+        ).from(table("space_marines")).join(table("chapters")).on("space_marines.chapter_id=chapters.chapter_id")
+                .where(condition).orderBy(sortBy).limit(size).offset(page*size).getSQL(ParamType.INLINED);
         System.out.println(query);
+
         List<SpaceMarine> spaceMarines = template.query(query, new SpaceMarineRowMapper());
+
+
 
         long total = template.queryForObject("SELECT count(*) FROM space_marines", Long.class);
 
@@ -127,7 +134,7 @@ public class SpaceMarineRepo {
         public SpaceMarine mapRow(ResultSet rs, int rowNum) throws SQLException {
             var coordinates = new Coordinates(rs.getFloat("x"), rs.getInt("y"));
             var weapon = Weapon.valueOf(rs.getString("weapon_type"));
-            var chapter = new Chapter(rs.getLong("chapter_id"), rs.getString("name"), rs.getInt("marines_count"));
+            var chapter = new Chapter(rs.getLong("chapter_id"), rs.getString("chapter_name"), rs.getInt("marines_count"));
 
             return new SpaceMarine(
                     rs.getInt("id"),

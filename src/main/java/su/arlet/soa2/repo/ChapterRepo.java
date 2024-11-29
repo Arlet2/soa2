@@ -25,10 +25,10 @@ public class ChapterRepo {
 
     public Chapter getByID(Long id) {
         return template.query(
-                dsl.select().from(table("chapters")).where(field("id").eq(id)).getSQL(ParamType.INLINED),
+                dsl.select().from(table()).where(field("chapter_id").eq(id)).getSQL(ParamType.INLINED),
                 (rs, rowNum) -> new Chapter(
-                        rs.getLong("id"),
-                        rs.getString("name"),
+                        rs.getLong("chapter_id"),
+                        rs.getString("chapter_name"),
                         rs.getLong("marines_count"))
 
         ).getFirst();
@@ -36,18 +36,18 @@ public class ChapterRepo {
 
     public Long createChapter(Chapter chapter) {
         return template.query(
-                dsl.insertInto(table("chapters")).columns(field("name"), field("marines_count"))
-                        .values(chapter.getName(), chapter.getMarinesCount()).returning(field("id")).getSQL(ParamType.INLINED),
-                (rs, rowNum) -> rs.getLong("id")
+                dsl.insertInto(table("chapters")).columns(field("chapter_name"), field("marines_count"))
+                        .values(chapter.getName(), chapter.getMarinesCount()).returning(field("chapter_id")).getSQL(ParamType.INLINED),
+                (rs, rowNum) -> rs.getLong("chapter_id")
         ).getFirst();
     }
 
     public Optional<Chapter> findByName(String name) {
         return template.query(
-                dsl.select().from(table("chapters")).where(field("name").eq(name)).getSQL(ParamType.INLINED),
+                dsl.select().from(table("chapters")).where(field("chapter_name").eq(name)).getSQL(ParamType.INLINED),
                 (rs, rowNum) -> new Chapter(
-                        rs.getLong("id"),
-                        rs.getString("name"),
+                        rs.getLong("chapter_id"),
+                        rs.getString("chapter_name"),
                         rs.getLong("marines_count"))
         ).stream().findFirst();
     }

@@ -1,8 +1,6 @@
 package su.arlet.soa2.core.exceptions.handler;
 
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,7 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import su.arlet.soa2.core.exceptions.EntityNotFoundException;
 
-import java.util.Map;
+import java.sql.SQLException;
+
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -29,11 +28,18 @@ public class ApiExceptionHandler {
          return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(errors);
      }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Error> handleException(HttpMessageNotReadableException e) {
+    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
+    public ResponseEntity<Error> handleException(RuntimeException e) {
         Error error = new Error(e.getLocalizedMessage());
         return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(error);
     }
+
+    @ExceptionHandler(SQLException.class)
+    public ResponseEntity<Error> handleException(SQLException e) {
+        Error error = new Error(e.getMessage());
+        return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(error);
+    }
+
 
 
 
