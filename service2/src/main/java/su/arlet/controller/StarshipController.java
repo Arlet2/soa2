@@ -5,6 +5,7 @@ import su.arlet.service.StarshipService;
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 @Path("/starships")
@@ -15,14 +16,14 @@ public class StarshipController {
 
     @POST
     @Path("/{starship-id}/unload/{space-marine-id}")
-    public Response unloadSpaceMarine() {
-        return Response.ok().entity("Service online unload").build();
+    public Response unloadSpaceMarine(@PathParam("starship-id") long starshipId, @PathParam("space-marine-id") long spaceMarineId) {
+        return starshipService.uploadSpaceMarine(spaceMarineId,starshipId);
     }
 
     @POST
     @Path("/{starship-id}/unload-all")
     public Response unloadAll() {
-        return Response.ok().entity(starshipService.testGetting()).build();
+        return Response.ok().entity(starshipService.uploadSpaceMarine(1,1)).build();
     }
 
     @POST

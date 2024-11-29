@@ -24,10 +24,15 @@ public class ChapterController {
     private ChapterService chapterService;
 
 
-    @PostMapping
+    @PostMapping(
+            consumes = "application/xml",
+            produces = "application/xml"
+    )
     public IdWrapper createChapter(@RequestBody @Validated ChapterPresenter chapter) {
         return new IdWrapper(chapterService.createChapter(chapter));
     }
+
+
 
 
 

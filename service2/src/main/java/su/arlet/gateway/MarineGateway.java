@@ -6,6 +6,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import java.net.ConnectException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -45,9 +46,13 @@ public class MarineGateway {
         this.webTarget = client.target("https://localhost/api/v1");
     }
 
-    public void unloadSpaceMarine() {
-        var response = webTarget.path("/space-marines").request().post(null);
+    public Response unloadSpaceMarine(long id, long starshipId) {
+        var response = webTarget.path("/space-marines/" + id + "/starships/"+ starshipId+ "/deploy").request().post(null);
+        return response;
+    }
 
-        System.out.println(response);
+    public Response undeployAll(long starshipId) {
+        var response = webTarget.path("/starships/" + starshipId + "/undeploy-all").request().post(null);
+        return response;
     }
 }

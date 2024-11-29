@@ -2,6 +2,7 @@ package su.arlet.soa2.dto.spaceMarine;
 
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class SpaceMarineCreator {
     @NotNull
     private String name;
     @NotNull
+    @Valid
     private CoordinatesPresenter coordinates;
     @NotNull
     private Integer health;

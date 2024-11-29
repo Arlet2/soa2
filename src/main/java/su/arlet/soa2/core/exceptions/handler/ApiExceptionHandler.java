@@ -25,7 +25,7 @@ public class ApiExceptionHandler {
          ValidationErrors errors  = new ValidationErrors(e.getFieldErrors().stream()
                  .map(error -> new Error(error.getField() +" " + error.getDefaultMessage()))
                  .toList());
-         return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(errors);
+         return ResponseEntity.unprocessableEntity().contentType(MediaType.APPLICATION_XML).body(errors);
      }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
