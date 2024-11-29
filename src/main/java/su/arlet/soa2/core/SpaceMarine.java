@@ -39,4 +39,6 @@ public class SpaceMarine {
 
     @NotNull
     private Chapter chapter; //Поле не может быть null
+
+    private Long starshipId; //Поле может быть null
 }

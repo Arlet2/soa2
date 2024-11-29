@@ -48,6 +48,7 @@ public class SpaceMarineController {
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
                 spaceMarine.getWeaponType().name(),
+                spaceMarine.getStarshipId(),
                 new ChapterPresenter(
                         spaceMarine.getChapter().getName(),
                         spaceMarine.getChapter().getMarinesCount()
@@ -95,6 +96,7 @@ public class SpaceMarineController {
                             spaceMarine.getHeartCount(),
                             spaceMarine.getAchievements(),
                             spaceMarine.getWeaponType().name(),
+                            spaceMarine.getStarshipId(),
                             new ChapterPresenter(
                                     spaceMarine.getChapter().getName(),
                                     spaceMarine.getChapter().getMarinesCount()
@@ -136,6 +138,8 @@ public class SpaceMarineController {
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
                 spaceMarine.getWeaponType().name(),
+                spaceMarine.getStarshipId(),
+
                 new ChapterPresenter(
                         spaceMarine.getChapter().getName(),
                         spaceMarine.getChapter().getMarinesCount()
@@ -149,6 +153,22 @@ public class SpaceMarineController {
     )
     public WeaponTypes getUniqueWeaponTypes() {
         return new WeaponTypes(spaceMarineService.getUniqueWeaponTypes());
+    }
+
+    @PostMapping(
+            path = "/{id}/starships/{starshipId}/deploy",
+            produces = "application/xml"
+    )
+    public void deploySpaceMarine(@PathVariable(name="id") Long id, @PathVariable(name="starshipId") Long starshipId) {
+        spaceMarineService.deploySpaceMarine(id,starshipId);
+    }
+
+    @PostMapping(
+            path = "/{id}/starships/undeploy",
+            produces = "application/xml"
+    )
+    public void undeploySpaceMarine(@PathVariable(name="id") Long id) {
+        spaceMarineService.undeploySpaceMarine(id);
     }
 
 
@@ -174,6 +194,7 @@ public class SpaceMarineController {
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
                 spaceMarine.getWeaponType().name(),
+                spaceMarine.getStarshipId(),
                 new ChapterPresenter(
                         spaceMarine.getChapter().getName(),
                         spaceMarine.getChapter().getMarinesCount()

@@ -21,6 +21,7 @@ public class SpaceMarinePresenter {
     private Long heartCount;
     private String achievements;
     private String weaponType;
+    private Long starshipId;
     private ChapterPresenter chapter;
 }
 

@@ -129,6 +129,24 @@ public class SpaceMarineRepo {
         return spaceMarine;
     }
 
+    public void deploySpaceMarine(Long id, Long starshipId) {
+        var query = dsl.update(table("space_marines"))
+                .set(field("starship_id"), starshipId)
+                .where(field("id").eq(id))
+                .getSQL(ParamType.INLINED);
+
+        template.update(query);
+    }
+
+    public void undeploySpaceMarine(Long id) {
+        var query = dsl.update(table("space_marines"))
+                .set(field("starship_id"), (Long) null)
+                .where(field("id").eq(id))
+                .getSQL(ParamType.INLINED);
+
+        template.update(query);
+    }
+
     private static class SpaceMarineRowMapper implements RowMapper<SpaceMarine> {
         @Override
         public SpaceMarine mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -145,8 +163,9 @@ public class SpaceMarineRepo {
                     rs.getLong("heart_count"),
                     rs.getString("achievements"),
                     weapon,
-                    chapter
-            );
+                    chapter,
+                    rs.getLong("starship_id")
+                    );
         }
     }
 }

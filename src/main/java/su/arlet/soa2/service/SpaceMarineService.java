@@ -58,7 +58,8 @@ public class SpaceMarineService {
                 spaceMarineCreateRequest.getHeartCount(),
                 spaceMarineCreateRequest.getAchievements(),
                 Weapon.valueOf(spaceMarineCreateRequest.getWeaponType()),
-                chapter
+                chapter,
+                null
         );
         return spaceMarineRepo.create(spaceMarine);
     }
@@ -73,6 +74,14 @@ public class SpaceMarineService {
 
     public void deleteSpaceMarineByChapterName(String chapterName) {
         spaceMarineRepo.deleteByChapterName(chapterName);
+    }
+
+    public void deploySpaceMarine(Long id, Long starshipId) {
+        spaceMarineRepo.deploySpaceMarine(id, starshipId);
+    }
+
+    public void undeploySpaceMarine(Long id) {
+        spaceMarineRepo.undeploySpaceMarine(id);
     }
 
 
