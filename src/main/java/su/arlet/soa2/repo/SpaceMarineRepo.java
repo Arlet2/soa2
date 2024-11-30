@@ -50,8 +50,8 @@ public class SpaceMarineRepo {
         template.update(query);
     }
 
-    public void deleteByChapterName(String name) {
-        var query = dsl.deleteFrom(table("space_marines")).where(field("chapter_id").eq(dsl.select(field("id")).from(table("chapters")).where(field("name").eq(name)))).getSQL(ParamType.INLINED);
+    public void deleteAnyByChapterName(String name) {
+        var query = dsl.deleteFrom(table("space_marines")).where(field("chapter_id").eq(dsl.select(field("id")).from(table("chapters")).where(field("name").eq(name)).limit(1))).getSQL(ParamType.INLINED);
         template.update(query);
     }
 

@@ -1,0 +1,4 @@
+CREATE TABLE starships(
+starship_id BIGSERIAL PRIMARY KEY,
+name TEXT NOT NULL
+);

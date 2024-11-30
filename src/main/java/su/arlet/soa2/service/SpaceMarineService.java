@@ -73,7 +73,7 @@ public class SpaceMarineService {
     }
 
     public void deleteSpaceMarineByChapterName(String chapterName) {
-        spaceMarineRepo.deleteByChapterName(chapterName);
+        spaceMarineRepo.deleteAnyByChapterName(chapterName);
     }
 
     public void deploySpaceMarine(Long id, Long starshipId) {

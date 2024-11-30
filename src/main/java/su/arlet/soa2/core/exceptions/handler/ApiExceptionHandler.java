@@ -37,6 +37,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<Error> handleException(SQLException e) {
         Error error = new Error(e.getMessage());
+        System.out.println(error.getReason());
         return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(error);
     }
 

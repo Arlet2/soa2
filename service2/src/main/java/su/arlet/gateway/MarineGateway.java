@@ -1,10 +1,13 @@
 package su.arlet.gateway;
 
+import su.arlet.core.StarshipCreator;
+
 import javax.ejb.Singleton;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.ConnectException;
@@ -53,6 +56,11 @@ public class MarineGateway {
 
     public Response undeployAll(long starshipId) {
         var response = webTarget.path("/starships/" + starshipId + "/undeploy-all").request().post(null);
+        return response;
+    }
+
+    public Response createStarship(StarshipCreator starship) {
+        var response = webTarget.path("/starships").request().post(Entity.xml(starship));
         return response;
     }
 }

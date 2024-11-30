@@ -1,11 +1,12 @@
 package su.arlet.controller;
 
+import su.arlet.core.StarshipCreator;
 import su.arlet.service.StarshipService;
 
 import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.print.attribute.standard.Media;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/starships")
@@ -22,13 +23,13 @@ public class StarshipController {
 
     @POST
     @Path("/{starship-id}/unload-all")
-    public Response unloadAll() {
-        return Response.ok().entity(starshipService.uploadSpaceMarine(1,1)).build();
+    public Response unloadAll(@PathParam("starship-id") long starshipId) {
+        return starshipService.undeployAll(starshipId);
     }
 
     @POST
-    @Path("/")
-    public Response createStarship() {
-        return Response.ok().entity("Service online").build();
+    @Consumes(MediaType.APPLICATION_XML)
+    public Response createStarship(StarshipCreator starship) {
+        return starshipService.createStarship(starship);
     }
 }
