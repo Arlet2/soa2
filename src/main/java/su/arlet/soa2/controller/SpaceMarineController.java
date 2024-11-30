@@ -148,7 +148,7 @@ public class SpaceMarineController {
     }
 
     @GetMapping(
-            path = "weapon-types/unique",
+            path = "/weapon-types/unique",
             produces = "application/xml"
     )
     public WeaponTypes getUniqueWeaponTypes() {
