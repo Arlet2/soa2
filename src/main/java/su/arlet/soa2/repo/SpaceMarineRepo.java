@@ -18,6 +18,7 @@ import su.arlet.soa2.core.Chapter;
 import su.arlet.soa2.core.Coordinates;
 import su.arlet.soa2.core.SpaceMarine;
 import su.arlet.soa2.core.Weapon;
+import su.arlet.soa2.dto.spaceMarine.SpaceMarinePresenter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ public class SpaceMarineRepo {
     }
 
     public SpaceMarine getFirstCreatedSpaceMarine(){
-        var query = dsl.select().from(table("space_marines")).orderBy(field("creation_date").asc()).limit(1).getSQL(ParamType.INLINED);
+        var query = dsl.select().from(table("space_marines").join(table("chapters")).on("space_marines.chapter_id=chapters.chapter_id")).orderBy(field("creation_date").asc()).limit(1).getSQL(ParamType.INLINED);
         return template.query(query, new SpaceMarineRowMapper()).getFirst();
     }
 
