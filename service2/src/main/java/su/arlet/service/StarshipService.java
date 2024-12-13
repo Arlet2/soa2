@@ -23,9 +23,9 @@ public class StarshipService {
             case 404:
                 return Response.status(404).build();
             case 500:
-               return Response.serverError().build();
+               return Response.status(503).build();
             default:
-                throw new EJBTransactionRolledbackException("Unknown error");
+                throw new RuntimeException("Unknown error");
         }
     }
 
@@ -41,9 +41,9 @@ public class StarshipService {
             case 404:
                 return Response.status(404).build();
             case 500:
-                return Response.serverError().build();
+                return Response.status(503).build();
             default:
-                throw new EJBTransactionRolledbackException("Unknown error");
+                throw new RuntimeException("Unknown error");
         }
     }
 
@@ -55,9 +55,9 @@ public class StarshipService {
             case 404:
                 return Response.status(404).build();
             case 500:
-                return Response.serverError().build();
+                return Response.status(503).build();
             default:
-                throw new EJBTransactionRolledbackException("Unknown error");
+                throw new RuntimeException("Unknown error");
         }
     }
 }

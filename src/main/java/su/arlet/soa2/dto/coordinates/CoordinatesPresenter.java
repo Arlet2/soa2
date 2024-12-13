@@ -1,9 +1,11 @@
 package su.arlet.soa2.dto.coordinates;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +14,10 @@ import lombok.Data;
 )
 public class CoordinatesPresenter {
     @NotNull
-    private Float x;
+    @DecimalMin("-674.0")
+    private BigDecimal x;
+
     @NotNull
-    private Double y;
+    @DecimalMax("883.0")
+    private BigDecimal y;
 }

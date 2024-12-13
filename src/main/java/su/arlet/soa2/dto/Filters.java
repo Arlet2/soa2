@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Filters {
 
-    private static final Pattern FILTER_PATTERN = Pattern.compile("^([а-яА-Яa-zA-Z_]+)([><=]|>=|<=)([а-яА-Яa-zA-Z0-9]+)$");
+    private static final Pattern FILTER_PATTERN = Pattern.compile("^([а-яА-Яa-zA-Z_]+)([><=]|>=|<=)([а-яА-Яa-zA-Z0-9_ ]+)$");
     private List<Condition> predicates = new LinkedList<>();
 
     public Filters(String[] filters)  {

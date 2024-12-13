@@ -2,9 +2,9 @@ package su.arlet.soa2.service;
 
 import lombok.AllArgsConstructor;
 import org.jooq.Condition;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import su.arlet.soa2.core.exceptions.EntityNotFoundException;
 import su.arlet.soa2.dto.Filters;
 import su.arlet.soa2.dto.spaceMarine.SpaceMarineCreator;
 import su.arlet.soa2.core.Coordinates;
@@ -29,7 +29,7 @@ public class SpaceMarineService {
     private ChapterService chapterService;
 
     public SpaceMarine getSpaceMarine(Long id) {
-        return spaceMarineRepo.getByID(id);
+        return spaceMarineRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("SpaceMarine with id " + id + " not found"));
     }
 
     public void deleteSpaceMarine(Long id) {
@@ -48,8 +48,13 @@ public class SpaceMarineService {
     }
 
     public Long createSpaceMarine(SpaceMarineCreator spaceMarineCreateRequest) {
-        var chapter = chapterService.getChapterByName(spaceMarineCreateRequest.getChapterName());
+        var chapter = spaceMarineCreateRequest.getChapterName().map(chapterService::getChapterByName);
         var coordinates = new Coordinates(spaceMarineCreateRequest.getCoordinates().getX(), spaceMarineCreateRequest.getCoordinates().getY());
+        var trueChapter = chapter.orElse(null);
+        if (chapter.isEmpty() && spaceMarineCreateRequest.getChapterName().isPresent()) {
+            throw new EntityNotFoundException("Chapter with name " + spaceMarineCreateRequest.getChapterName().get() + " not found");
+        }
+
         var spaceMarine = new SpaceMarine(null,
                 spaceMarineCreateRequest.getName(),
                 coordinates,
@@ -58,7 +63,7 @@ public class SpaceMarineService {
                 spaceMarineCreateRequest.getHeartCount(),
                 spaceMarineCreateRequest.getAchievements(),
                 Weapon.valueOf(spaceMarineCreateRequest.getWeaponType()),
-                chapter,
+                trueChapter,
                 null
         );
         return spaceMarineRepo.create(spaceMarine);
@@ -73,7 +78,8 @@ public class SpaceMarineService {
     }
 
     public void deleteSpaceMarineByChapterName(String chapterName) {
-        spaceMarineRepo.deleteAnyByChapterName(chapterName);
+        var spaceMarine =  spaceMarineRepo.getByChapterName(chapterName).orElseThrow(() -> new EntityNotFoundException("SpaceMarine with name " + chapterName + " not found"));
+        spaceMarineRepo.deleteByID(Long.valueOf(spaceMarine.getId()));
     }
 
     public void deploySpaceMarine(Long id, Long starshipId) {
@@ -86,7 +92,7 @@ public class SpaceMarineService {
 
 
     public SpaceMarine updateSpaceMarineInPlace(Long i, SpaceMarineUpdater spaceMarineUpdater) {
-        var spaceMarine = spaceMarineRepo.getByID(i);
+        var spaceMarine = spaceMarineRepo.findById(i).orElseThrow(() -> new EntityNotFoundException("SpaceMarine with id " + i + " not found"));
 
         spaceMarineUpdater.getName().ifPresent(spaceMarine::setName);
         spaceMarineUpdater.getCoordinates().ifPresent(coordinatesPresenter -> {

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @JacksonXmlRootElement(
         localName = "coordinates"
@@ -14,8 +16,8 @@ import lombok.Data;
 public class Coordinates {
 
     @NotNull
-    private Float x; //Поле не может быть null
+    private BigDecimal x; //Поле не может быть null
 
     @Max(883)
-    private double y; //Максимальное значение поля: 883
+    private BigDecimal y; //Максимальное значение поля: 883
 }
