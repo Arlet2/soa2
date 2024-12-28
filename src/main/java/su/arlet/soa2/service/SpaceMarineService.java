@@ -54,6 +54,7 @@ public class SpaceMarineService {
         if (chapter.isEmpty() && spaceMarineCreateRequest.getChapterName().isPresent()) {
             throw new EntityNotFoundException("Chapter with name " + spaceMarineCreateRequest.getChapterName().get() + " not found");
         }
+        Weapon weapon = spaceMarineCreateRequest.getWeaponType()==null ? null:Weapon.valueOf(spaceMarineCreateRequest.getWeaponType());
 
         var spaceMarine = new SpaceMarine(null,
                 spaceMarineCreateRequest.getName(),
@@ -62,7 +63,7 @@ public class SpaceMarineService {
                 spaceMarineCreateRequest.getHealth(),
                 spaceMarineCreateRequest.getHeartCount(),
                 spaceMarineCreateRequest.getAchievements(),
-                Weapon.valueOf(spaceMarineCreateRequest.getWeaponType()),
+                weapon,
                 trueChapter,
                 null
         );

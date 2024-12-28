@@ -1,37 +1,41 @@
 package su.arlet.controller;
 
-import su.arlet.core.StarshipCreator;
-import su.arlet.service.StarshipService;
+import su.arlet.dto.StarshipCreator;
+import su.arlet.ejb.StarshipServiceRemote;
 
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ejb.EJB;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/starships")
 public class StarshipController {
 
-    @Inject
-    private StarshipService starshipService;
+    @EJB(lookup = "ejb:/ejb-module-0.0.1-SNAPSHOT/StarshipServiceBean!su.arlet.ejb.StarshipServiceRemote")
+    private StarshipServiceRemote starshipService;
 
     @POST
     @Path("/{starship-id}/unload/{space-marine-id}")
     public Response unloadSpaceMarine(@PathParam("starship-id") long starshipId, @PathParam("space-marine-id") long spaceMarineId) {
-        return starshipService.uploadSpaceMarine(spaceMarineId,starshipId);
+        return Response.status(starshipService.unloadSpaceMarine(starshipId, spaceMarineId)).build() ;
     }
 
     @POST
     @Path("/{starship-id}/unload-all")
     public Response unloadAll(@PathParam("starship-id") long starshipId) {
-        return starshipService.undeployAll(starshipId);
+            return Response.status(starshipService.undeployAll(starshipId)).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     public Response createStarship(StarshipCreator starship) {
-        return starshipService.createStarship(starship);
+        return Response.status(starshipService.createStarship(starship)).build();
+    }
+
+    @GET
+    @Path("/health")
+    public Response health() {
+        System.out.println("УРАААА ГОРНЫЙ ОТКРЫЛИ");
+        return Response.ok().build();
     }
 }

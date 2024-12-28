@@ -1,9 +1,11 @@
 package su.arlet.gateway;
 
-import su.arlet.controller.ConnectionException;
-import su.arlet.core.StarshipCreator;
+
+import org.jboss.ejb3.annotation.Pool;
+import su.arlet.dto.StarshipCreator;
 
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -11,12 +13,12 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.net.ConnectException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
-@Singleton
+@Stateless
+@Pool("slsb-strict-max-pool")
 public class MarineGateway {
 
     private final WebTarget webTarget;

@@ -18,8 +18,7 @@ public class SpaceshipController {
 
     @PostMapping(
             consumes = "application/xml",
-            produces = "application/xml",
-            path = "/create"
+            produces = "application/xml"
     )
     public IdWrapper createSpaceship(@RequestBody @Validated SpaceshipCreator spaceship) {
         return new IdWrapper(spaceshipService.createSpaceship(spaceship));

@@ -14,6 +14,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("javax:javaee-api:7.0")
+    implementation(project(":service2:ejb-module"))
+
 
     implementation("org.jboss.resteasy:resteasy-servlet-initializer:6.2.10.Final")
     implementation("org.jboss.resteasy:resteasy-jaxb-provider:6.2.10.Final")
@@ -29,3 +31,4 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+

@@ -70,6 +70,7 @@ public class SpaceMarineRepo {
 
     public Long create(SpaceMarine spaceMarine) {
         var chapterId = spaceMarine.getChapter()==null?null:spaceMarine.getChapter().getId();
+        var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().toString();
 
         var query = dsl.insertInto(table("space_marines"))
                 .columns(
@@ -91,7 +92,7 @@ public class SpaceMarineRepo {
                         spaceMarine.getHealth(),
                         spaceMarine.getHeartCount(),
                         spaceMarine.getAchievements(),
-                        spaceMarine.getWeaponType().toString(),
+                        stringValueWeapon,
                         chapterId
                 ).returning(field("id")).getSQL(ParamType.INLINED);
         return template.queryForObject(query, Long.class);
@@ -115,6 +116,9 @@ public class SpaceMarineRepo {
     }
 
     public SpaceMarine updatePatch(SpaceMarine spaceMarine) {
+        var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().toString();
+
+
         var query = dsl.update(table("space_marines"))
                 .set(field("name"), spaceMarine.getName())
                 .set(field("x"), spaceMarine.getCoordinates().getX())
@@ -123,7 +127,7 @@ public class SpaceMarineRepo {
                 .set(field("health"), spaceMarine.getHealth())
                 .set(field("heart_count"), spaceMarine.getHeartCount())
                 .set(field("achievements"), spaceMarine.getAchievements())
-                .set(field("weapon_type"), spaceMarine.getWeaponType().toString())
+                .set(field("weapon_type"), stringValueWeapon)
                 .set(field("chapter_id"), spaceMarine.getChapter().getId())
                 .where(field("id").eq(spaceMarine.getId()))
                 .getSQL(ParamType.INLINED);
@@ -155,9 +159,9 @@ public class SpaceMarineRepo {
         @Override
         public SpaceMarine mapRow(ResultSet rs, int rowNum) throws SQLException {
             var coordinates = new Coordinates(rs.getBigDecimal("x"), rs.getBigDecimal("y"));
-            var weapon = Weapon.valueOf(rs.getString("weapon_type"));
+            var weapon_type = (rs.getString("weapon_type"));
+            var weapon =  weapon_type==null?null: Weapon.valueOf(rs.getString("weapon_type"));
             var chapter = new Chapter(rs.getLong("chapter_id"), rs.getString("chapter_name"), rs.getInt("marines_count"));
-
             return new SpaceMarine(
                     rs.getInt("id"),
                     rs.getString("name"),

@@ -1,4 +1,4 @@
-package su.arlet.controller;
+package su.arlet.gateway;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;

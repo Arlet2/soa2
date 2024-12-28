@@ -41,7 +41,7 @@ public class ApiExceptionHandler {
 
         String userFriendlyMessage = extractUserFriendlyMessage(detailedMessage);
 
-        Error error = new Error(userFriendlyMessage);
+        Error error = new Error(detailedMessage);
         return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(error);
     }
 

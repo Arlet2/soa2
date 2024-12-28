@@ -20,6 +20,7 @@ import su.arlet.soa2.dto.weapon.WeaponTypes;
 import su.arlet.soa2.service.ChapterService;
 import su.arlet.soa2.service.SpaceMarineService;
 
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -45,6 +46,8 @@ public class SpaceMarineController {
                 spaceMarine.getChapter().getName(),
                 spaceMarine.getChapter().getMarinesCount()
         );
+        var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().name();
+
 
 
         return new SpaceMarinePresenter(
@@ -55,7 +58,7 @@ public class SpaceMarineController {
                 spaceMarine.getHealth(),
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
-                spaceMarine.getWeaponType().name(),
+                stringValueWeapon,
                 spaceMarine.getStarshipId(),
                 chapterPresenter
         );
@@ -94,17 +97,19 @@ public class SpaceMarineController {
                             spaceMarine.getChapter().getName(),
                             spaceMarine.getChapter().getMarinesCount()
                     );
+                    var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().name();
+
 
 
                     return new SpaceMarinePresenter(
                             spaceMarine.getId().longValue(),
                             spaceMarine.getName(),
                             coordinatesPresenter,
-                            DateTimeFormatter.ISO_INSTANT.format(spaceMarine.getCreationDate().atZone(ZoneOffset.UTC).toInstant()),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").withZone(ZoneId.from(ZoneOffset.UTC)).format(spaceMarine.getCreationDate().atZone(ZoneOffset.UTC).toInstant()),
                             spaceMarine.getHealth(),
                             spaceMarine.getHeartCount(),
                             spaceMarine.getAchievements(),
-                            spaceMarine.getWeaponType().name(),
+                            stringValueWeapon,
                             spaceMarine.getStarshipId(),
                             chapterPresenter
                     );
@@ -138,6 +143,8 @@ public class SpaceMarineController {
                 spaceMarine.getChapter().getName(),
                 spaceMarine.getChapter().getMarinesCount()
         );
+        var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().name();
+
 
 
         return new SpaceMarinePresenter(
@@ -148,7 +155,7 @@ public class SpaceMarineController {
                 spaceMarine.getHealth(),
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
-                spaceMarine.getWeaponType().name(),
+                stringValueWeapon,
                 spaceMarine.getStarshipId(),
 
                 chapterPresenter
@@ -195,6 +202,8 @@ public class SpaceMarineController {
                 spaceMarine.getChapter().getName(),
                 spaceMarine.getChapter().getMarinesCount()
         );
+        var stringValueWeapon = spaceMarine.getWeaponType()==null?null: spaceMarine.getWeaponType().name();
+
 
 
 
@@ -206,7 +215,7 @@ public class SpaceMarineController {
                 spaceMarine.getHealth(),
                 spaceMarine.getHeartCount(),
                 spaceMarine.getAchievements(),
-                spaceMarine.getWeaponType().name(),
+                stringValueWeapon,
                 spaceMarine.getStarshipId(),
                 chapterPresenter
         );
