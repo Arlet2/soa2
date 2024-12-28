@@ -1,13 +1,13 @@
 package su.arlet;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.*;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
-public class CorsFilter implements ContainerResponseFilter {
+@PreMatching
+public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext,
@@ -23,4 +23,15 @@ public class CorsFilter implements ContainerResponseFilter {
                 "Access-Control-Allow-Methods",
                 "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }
+
+    private static boolean isPreflightRequest(ContainerRequestContext request) {
+        return request.getHeaderString("Origin") != null
+                && request.getMethod().equalsIgnoreCase("OPTIONS");
+    }
+
+    @Override
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+
+    }
+
 }

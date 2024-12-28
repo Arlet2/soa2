@@ -17,7 +17,7 @@ public class StarshipController {
     @POST
     @Path("/{starship-id}/unload/{space-marine-id}")
     public Response unloadSpaceMarine(@PathParam("starship-id") long starshipId, @PathParam("space-marine-id") long spaceMarineId) {
-        return Response.status(starshipService.unloadSpaceMarine(starshipId, spaceMarineId)).build() ;
+        return Response.status(starshipService.unloadSpaceMarine(starshipId, spaceMarineId)).build();
     }
 
     @POST
@@ -36,6 +36,6 @@ public class StarshipController {
     @Path("/health")
     public Response health() {
         System.out.println("УРАААА ГОРНЫЙ ОТКРЫЛИ");
-        return Response.ok().build();
+        return Response.ok().entity("OK").build();
     }
 }

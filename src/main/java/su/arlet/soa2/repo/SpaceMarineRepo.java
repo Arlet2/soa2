@@ -59,8 +59,8 @@ public class SpaceMarineRepo {
     }
 
     public SpaceMarine getFirstCreatedSpaceMarine(){
-        var query = dsl.select().from(table("space_marines").leftJoin(table("chapters")).on("space_marines.chapter_id=chapters.chapter_id")).orderBy(field("creation_date").asc()).limit(1).getSQL(ParamType.INLINED);
-        return template.query(query, new SpaceMarineRowMapper()).getFirst();
+        var query = dsl.select().from(table("space_marines").join(table("chapters")).on("space_marines.chapter_id=chapters.chapter_id")).orderBy(field("creation_date").asc()).limit(1).getSQL(ParamType.INLINED);
+        return template.query(query, new SpaceMarineRowMapper()).get(0);
     }
 
     public List<Weapon> getUniqueWeaponTypes() {

@@ -31,7 +31,7 @@ public class ChapterRepo {
                         rs.getString("chapter_name"),
                         rs.getLong("marines_count"))
 
-        ).getFirst();
+        ).get(0);
     }
 
     public Long createChapter(Chapter chapter) {
@@ -39,7 +39,7 @@ public class ChapterRepo {
                 dsl.insertInto(table("chapters")).columns(field("chapter_name"), field("marines_count"))
                         .values(chapter.getName(), chapter.getMarinesCount()).returning(field("chapter_id")).getSQL(ParamType.INLINED),
                 (rs, rowNum) -> rs.getLong("chapter_id")
-        ).getFirst();
+        ).get(0);
     }
 
     public Optional<Chapter> findByName(String name) {
