@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 public class MarineGateway {
 
     private final WebTarget webTarget;
+    private final String host = "https://localhost:9080/api/v1";
 
     public MarineGateway() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] noopTrustManager = new TrustManager[]{
@@ -50,7 +51,7 @@ public class MarineGateway {
                     .sslContext(sc)
                     .hostnameVerifier((hostname, session) -> true)
                     .build();
-            this.webTarget = client.target("https://localhost/api/v1");
+            this.webTarget = client.target(host);
         } catch (Exception e) {
             throw new ConnectionException("Can't connect to the server");
         }
