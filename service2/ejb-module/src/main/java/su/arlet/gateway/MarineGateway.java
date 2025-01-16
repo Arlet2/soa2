@@ -53,6 +53,7 @@ public class MarineGateway {
                     .build();
             this.webTarget = client.target(host);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new ConnectionException("Can't connect to the server");
         }
     }
@@ -61,15 +62,22 @@ public class MarineGateway {
         try {
             return webTarget.path("/space-marines/" + id + "/starships/" + starshipId + "/deploy").request().post(null);
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return Response.status(500).build();
         }
     }
 
     public Response undeployAll(long starshipId) {
         try {
-            return webTarget.path("/starships/" + starshipId + "/undeploy-all").request().post(null);
+            var resp = webTarget.path("/starships/" + starshipId + "/undeploy-all").request().post(null);
+
+            System.out.println(resp);
+            System.out.println("HEY");
+
+            return resp;
         }
         catch (Exception e){
+            System.out.println(e.getMessage());
             return Response.status(500).build();
         }
     }
@@ -78,6 +86,7 @@ public class MarineGateway {
         try {
             return webTarget.path("/starships").request().post(Entity.xml(starship));
         }  catch (Exception e){
+            System.out.println(e.getMessage());
             return Response.status(500).build();
         }
 
