@@ -6,41 +6,34 @@ import org.jboss.ejb3.annotation.Pool;
 import su.arlet.dto.StarshipCreator;
 import su.arlet.gateway.MarineGateway;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import javax.xml.ws.WebServiceRef;
 
 @Stateless
 @Pool("slsb-strict-max-pool")
 public class StarshipServiceBean implements StarshipServiceRemote {
 
     @EJB
-    private MarineGateway marineGateway;
+    @WebServiceRef(wsdlLocation =
+            "http://localhost:8080/helloservice-war/HelloService?WSDL")
+    private static MarineGateway marineGateway;
 
     @Override
     public int createStarship(StarshipCreator starship) {
-        var response = marineGateway.createStarship(starship);
-        if (response.getStatus()==500) {
-            return 503;
-        }
-        return response.getStatus();
+        return 200;
 
     }
 
     @Override
     public int unloadSpaceMarine(long starshipId, long spaceMarineId) {
-        var response = marineGateway.unloadSpaceMarine(spaceMarineId, starshipId);
-        if (response.getStatus()==500) {
-            return 503;
-        }
-        return response.getStatus();
+        marineGateway.deploy(spaceMarineId, starshipId);
+
+        return 200;
     }
 
     @Override
     public int undeployAll(long starshipId) {
-        var response = marineGateway.undeployAll(starshipId);
-        if (response.getStatus()==500) {
-            return 503;
-        }
-        return response.getStatus();
+        marineGateway.undeployAll(starshipId);
+
+        return 200;
     }
 }
